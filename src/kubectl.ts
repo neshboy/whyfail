@@ -11,6 +11,10 @@ function runKubectl(args: string[]): string {
     return execFileSync('kubectl', args, {
       encoding: 'utf-8',
       maxBuffer: 1024 * 1024 * 64,
+      // Capture stdout/stderr into buffers instead of letting the child
+      // inherit our stderr - otherwise kubectl's own error logging would
+      // print once "live" and then again inside our formatted error below.
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
   } catch (err: unknown) {
     const e = err as NodeJS.ErrnoException & { stderr?: Buffer | string };
