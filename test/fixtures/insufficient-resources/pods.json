@@ -1,0 +1,16 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "ml-training-6f7g8-cpu01", "namespace": "demo", "uid": "uid-res-1" },
+      "spec": { "containers": [{ "name": "ml-training", "image": "example/ml-training:7.0.0" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [
+          { "type": "PodScheduled", "status": "False", "reason": "Unschedulable", "message": "0/5 nodes are available: 5 Insufficient cpu." }
+        ]
+      }
+    }
+  ]
+}

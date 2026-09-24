@@ -1,0 +1,25 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "web-frontend-8c9d0-mmm22", "namespace": "demo", "uid": "uid-img-1" },
+      "spec": { "containers": [{ "name": "web-frontend", "image": "example/web-frontend:v9.9.9-typo" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [{ "type": "Ready", "status": "False", "reason": "ContainersNotReady" }],
+        "containerStatuses": [
+          {
+            "name": "web-frontend",
+            "image": "example/web-frontend:v9.9.9-typo",
+            "ready": false,
+            "restartCount": 0,
+            "state": {
+              "waiting": { "reason": "ImagePullBackOff", "message": "Back-off pulling image \"example/web-frontend:v9.9.9-typo\"" }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

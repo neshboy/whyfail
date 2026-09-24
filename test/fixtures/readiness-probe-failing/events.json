@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "checkout-service-3c4d5-rdy01", "namespace": "demo" },
+      "reason": "Unhealthy",
+      "message": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T12:00:30Z",
+      "lastTimestamp": "2026-09-24T12:05:30Z",
+      "count": 10,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

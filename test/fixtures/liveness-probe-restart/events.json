@@ -1,0 +1,25 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "search-indexer-4d5e6-liv01", "namespace": "demo" },
+      "reason": "Unhealthy",
+      "message": "Liveness probe failed: dial tcp 10.1.5.9:9200: connect: connection refused",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T13:05:00Z",
+      "lastTimestamp": "2026-09-24T13:09:50Z",
+      "count": 6,
+      "source": { "component": "kubelet" }
+    },
+    {
+      "involvedObject": { "kind": "Pod", "name": "search-indexer-4d5e6-liv01", "namespace": "demo" },
+      "reason": "Killing",
+      "message": "Container search-indexer failed liveness probe, will be restarted",
+      "type": "Normal",
+      "firstTimestamp": "2026-09-24T13:09:55Z",
+      "lastTimestamp": "2026-09-24T13:09:55Z",
+      "count": 1,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

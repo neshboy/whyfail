@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "ml-training-6f7g8-cpu01", "namespace": "demo" },
+      "reason": "FailedScheduling",
+      "message": "0/5 nodes are available: 5 Insufficient cpu.",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T15:00:00Z",
+      "lastTimestamp": "2026-09-24T15:05:00Z",
+      "count": 7,
+      "source": { "component": "default-scheduler" }
+    }
+  ]
+}

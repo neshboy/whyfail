@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "custom-agent-8h9i0-net01", "namespace": "demo" },
+      "reason": "FailedCreatePodSandBox",
+      "message": "Failed to create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container: failed to find plugin \"calico\" in path [/opt/cni/bin]",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T17:00:00Z",
+      "lastTimestamp": "2026-09-24T17:02:00Z",
+      "count": 4,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

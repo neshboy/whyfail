@@ -1,0 +1,28 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "internal-tool-4d5e6-priv1", "namespace": "demo", "uid": "uid-img-2" },
+      "spec": { "containers": [{ "name": "internal-tool", "image": "registry.internal.example.com/tools/internal-tool:3.0.0" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [{ "type": "Ready", "status": "False", "reason": "ContainersNotReady" }],
+        "containerStatuses": [
+          {
+            "name": "internal-tool",
+            "image": "registry.internal.example.com/tools/internal-tool:3.0.0",
+            "ready": false,
+            "restartCount": 0,
+            "state": {
+              "waiting": {
+                "reason": "ImagePullBackOff",
+                "message": "Back-off pulling image \"registry.internal.example.com/tools/internal-tool:3.0.0\""
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

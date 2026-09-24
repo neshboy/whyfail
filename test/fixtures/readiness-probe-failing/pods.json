@@ -1,0 +1,27 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "checkout-service-3c4d5-rdy01", "namespace": "demo", "uid": "uid-rdy-1" },
+      "spec": { "containers": [{ "name": "checkout-service", "image": "example/checkout-service:4.0.1" }] },
+      "status": {
+        "phase": "Running",
+        "conditions": [
+          { "type": "Initialized", "status": "True" },
+          { "type": "Ready", "status": "False", "reason": "ContainersNotReady" },
+          { "type": "ContainersReady", "status": "False", "reason": "ContainersNotReady" }
+        ],
+        "containerStatuses": [
+          {
+            "name": "checkout-service",
+            "image": "example/checkout-service:4.0.1",
+            "ready": false,
+            "restartCount": 0,
+            "state": { "running": { "startedAt": "2026-09-24T12:00:00Z" } }
+          }
+        ]
+      }
+    }
+  ]
+}

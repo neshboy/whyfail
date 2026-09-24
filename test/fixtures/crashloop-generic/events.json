@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "billing-worker-6b7d8-qqq11", "namespace": "demo" },
+      "reason": "BackOff",
+      "message": "Back-off restarting failed container",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T09:00:10Z",
+      "lastTimestamp": "2026-09-24T09:20:00Z",
+      "count": 18,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

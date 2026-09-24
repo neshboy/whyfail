@@ -1,0 +1,21 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "gpu-job-7g8h9-aff01", "namespace": "demo", "uid": "uid-aff-1" },
+      "spec": { "containers": [{ "name": "gpu-job", "image": "example/gpu-job:8.0.0" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [
+          {
+            "type": "PodScheduled",
+            "status": "False",
+            "reason": "Unschedulable",
+            "message": "0/6 nodes are available: 6 node(s) didn't match Pod's node affinity/selector."
+          }
+        ]
+      }
+    }
+  ]
+}

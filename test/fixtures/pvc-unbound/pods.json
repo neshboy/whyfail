@@ -1,0 +1,27 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "analytics-db-5e6f7-pvc01", "namespace": "demo", "uid": "uid-pvc-1" },
+      "spec": { "containers": [{ "name": "analytics-db", "image": "example/analytics-db:6.1.0" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [
+          { "type": "PodScheduled", "status": "True" },
+          { "type": "Initialized", "status": "False" },
+          { "type": "Ready", "status": "False", "reason": "ContainersNotReady" }
+        ],
+        "containerStatuses": [
+          {
+            "name": "analytics-db",
+            "image": "example/analytics-db:6.1.0",
+            "ready": false,
+            "restartCount": 0,
+            "state": { "waiting": { "reason": "ContainerCreating" } }
+          }
+        ]
+      }
+    }
+  ]
+}

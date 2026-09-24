@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "internal-tool-4d5e6-priv1", "namespace": "demo" },
+      "reason": "Failed",
+      "message": "Failed to pull image \"registry.internal.example.com/tools/internal-tool:3.0.0\": rpc error: code = Unknown desc = failed to pull and unpack image: failed to resolve reference: unexpected status code: 401 Unauthorized: no basic auth credentials",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T08:10:00Z",
+      "lastTimestamp": "2026-09-24T08:15:00Z",
+      "count": 4,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

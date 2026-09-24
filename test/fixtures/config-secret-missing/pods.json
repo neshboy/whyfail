@@ -1,0 +1,28 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "payments-api-2b3c4-sec01", "namespace": "demo", "uid": "uid-sec-1" },
+      "spec": { "containers": [{ "name": "payments-api", "image": "example/payments-api:2.2.0" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [{ "type": "Initialized", "status": "True" }, { "type": "Ready", "status": "False", "reason": "ContainersNotReady" }],
+        "containerStatuses": [
+          {
+            "name": "payments-api",
+            "image": "example/payments-api:2.2.0",
+            "ready": false,
+            "restartCount": 0,
+            "state": {
+              "waiting": {
+                "reason": "CreateContainerConfigError",
+                "message": "secret \"payments-api-tls\" not found"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

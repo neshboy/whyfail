@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "cache-worker-7d9f8c-abcde", "namespace": "demo" },
+      "reason": "BackOff",
+      "message": "Back-off restarting failed container",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T10:02:15Z",
+      "lastTimestamp": "2026-09-24T10:10:00Z",
+      "count": 12,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

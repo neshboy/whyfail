@@ -1,0 +1,25 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "api-gateway-5f6c7-xyz12", "namespace": "demo" },
+      "reason": "Unhealthy",
+      "message": "Liveness probe failed: Get \"http://10.1.2.3:8080/healthz\": context deadline exceeded",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T11:00:20Z",
+      "lastTimestamp": "2026-09-24T11:00:30Z",
+      "count": 1,
+      "source": { "component": "kubelet" }
+    },
+    {
+      "involvedObject": { "kind": "Pod", "name": "api-gateway-5f6c7-xyz12", "namespace": "demo" },
+      "reason": "Killing",
+      "message": "Container api-gateway failed liveness probe, will be restarted",
+      "type": "Normal",
+      "firstTimestamp": "2026-09-24T11:00:35Z",
+      "lastTimestamp": "2026-09-24T11:00:35Z",
+      "count": 1,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

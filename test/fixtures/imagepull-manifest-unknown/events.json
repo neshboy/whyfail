@@ -1,0 +1,25 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "web-frontend-8c9d0-mmm22", "namespace": "demo" },
+      "reason": "Failed",
+      "message": "Failed to pull image \"example/web-frontend:v9.9.9-typo\": rpc error: code = NotFound desc = failed to pull and unpack image: manifest unknown",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T08:00:00Z",
+      "lastTimestamp": "2026-09-24T08:05:00Z",
+      "count": 5,
+      "source": { "component": "kubelet" }
+    },
+    {
+      "involvedObject": { "kind": "Pod", "name": "web-frontend-8c9d0-mmm22", "namespace": "demo" },
+      "reason": "BackOff",
+      "message": "Back-off pulling image \"example/web-frontend:v9.9.9-typo\"",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T08:00:05Z",
+      "lastTimestamp": "2026-09-24T08:05:05Z",
+      "count": 5,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

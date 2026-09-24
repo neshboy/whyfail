@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "settings-service-1a2b3-cfg01", "namespace": "demo" },
+      "reason": "Failed",
+      "message": "Error: configmap \"settings-service-config\" not found",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T07:00:00Z",
+      "lastTimestamp": "2026-09-24T07:01:00Z",
+      "count": 3,
+      "source": { "component": "kubelet" }
+    }
+  ]
+}

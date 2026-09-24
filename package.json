@@ -1,0 +1,29 @@
+{
+  "name": "whyfail",
+  "version": "0.1.0",
+  "description": "A Kubernetes troubleshooting CLI that correlates pod status, container states, and events into a plain-English explanation of why a pod is failing.",
+  "license": "MIT",
+  "bin": {
+    "whyfail": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "pretest": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "start": "node dist/cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.5.4",
+    "vitest": "^5.0.1"
+  }
+}

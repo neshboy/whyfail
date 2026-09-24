@@ -1,0 +1,15 @@
+{
+  "kind": "EventList",
+  "items": [
+    {
+      "involvedObject": { "kind": "Pod", "name": "gpu-job-7g8h9-aff01", "namespace": "demo" },
+      "reason": "FailedScheduling",
+      "message": "0/6 nodes are available: 6 node(s) didn't match Pod's node affinity/selector.",
+      "type": "Warning",
+      "firstTimestamp": "2026-09-24T16:00:00Z",
+      "lastTimestamp": "2026-09-24T16:02:00Z",
+      "count": 3,
+      "source": { "component": "default-scheduler" }
+    }
+  ]
+}

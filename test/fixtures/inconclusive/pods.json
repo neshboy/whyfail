@@ -1,0 +1,27 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "custom-agent-8h9i0-net01", "namespace": "demo", "uid": "uid-inc-1" },
+      "spec": { "containers": [{ "name": "custom-agent", "image": "example/custom-agent:9.0.0" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [
+          { "type": "PodScheduled", "status": "True" },
+          { "type": "Initialized", "status": "False" },
+          { "type": "Ready", "status": "False", "reason": "ContainersNotReady" }
+        ],
+        "containerStatuses": [
+          {
+            "name": "custom-agent",
+            "image": "example/custom-agent:9.0.0",
+            "ready": false,
+            "restartCount": 0,
+            "state": { "waiting": { "reason": "ContainerCreating" } }
+          }
+        ]
+      }
+    }
+  ]
+}

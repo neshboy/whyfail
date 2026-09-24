@@ -1,0 +1,28 @@
+{
+  "kind": "PodList",
+  "items": [
+    {
+      "kind": "Pod",
+      "metadata": { "name": "settings-service-1a2b3-cfg01", "namespace": "demo", "uid": "uid-cfg-1" },
+      "spec": { "containers": [{ "name": "settings-service", "image": "example/settings-service:1.0.0" }] },
+      "status": {
+        "phase": "Pending",
+        "conditions": [{ "type": "Initialized", "status": "True" }, { "type": "Ready", "status": "False", "reason": "ContainersNotReady" }],
+        "containerStatuses": [
+          {
+            "name": "settings-service",
+            "image": "example/settings-service:1.0.0",
+            "ready": false,
+            "restartCount": 0,
+            "state": {
+              "waiting": {
+                "reason": "CreateContainerConfigError",
+                "message": "configmap \"settings-service-config\" not found"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
