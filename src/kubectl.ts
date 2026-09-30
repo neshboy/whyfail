@@ -26,12 +26,24 @@ function runKubectl(args: string[]): string {
   }
 }
 
+function parseKubectlJson<T>(text: string, what: string): T {
+  try {
+    return JSON.parse(text) as T;
+  } catch (err) {
+    // Malformed/non-JSON stdout (e.g. from exec-credential plugins or client
+    // warnings kubectl prints to stdout) should surface as the same honest
+    // KubectlError the --from-file path produces for parse failures, not an
+    // unhandled exception.
+    throw new KubectlError(`could not parse kubectl output while ${what} as JSON: ${(err as Error).message}`);
+  }
+}
+
 export function fetchPods(namespace: string): PodList {
   const out = runKubectl(['get', 'pods', '-n', namespace, '-o', 'json']);
-  return JSON.parse(out) as PodList;
+  return parseKubectlJson<PodList>(out, 'fetching pods');
 }
 
 export function fetchEvents(namespace: string): EventList {
   const out = runKubectl(['get', 'events', '-n', namespace, '-o', 'json']);
-  return JSON.parse(out) as EventList;
+  return parseKubectlJson<EventList>(out, 'fetching events');
 }

@@ -27,7 +27,13 @@ function eventsForPod(pod: Pod, events: K8sEvent[]): K8sEvent[] {
       (e) =>
         e.involvedObject?.kind === 'Pod' &&
         e.involvedObject?.name === pod.metadata.name &&
-        (!pod.metadata.namespace || !e.involvedObject.namespace || e.involvedObject.namespace === pod.metadata.namespace),
+        (!pod.metadata.namespace || !e.involvedObject.namespace || e.involvedObject.namespace === pod.metadata.namespace) &&
+        // If both sides carry a uid, they must match. This keeps events from a
+        // previous, deleted pod instance that happened to reuse the same name
+        // (StatefulSet ordinals, DaemonSet/static pods) from being attributed
+        // to the new pod instance. When either uid is missing we fall back to
+        // the name+namespace match above.
+        (!pod.metadata.uid || !e.involvedObject.uid || e.involvedObject.uid === pod.metadata.uid),
     )
     .slice()
     .sort((a, b) => {
@@ -134,7 +140,35 @@ export function analyzePod(pod: Pod, allEvents: K8sEvent[]): PodDiagnosis {
   };
 }
 
+/**
+ * Groups events by involvedObject.name in a single pass, so analyzeNamespace
+ * doesn't have to re-scan (and eventsForPod re-sort) the *entire* events list
+ * for every pod. Pod names are unique within a namespace, so - for the
+ * single-namespace batches this tool actually analyzes - each bucket already
+ * contains only the events relevant to (at most a small handful of
+ * same-named) pods; eventsForPod still applies the exact namespace/uid match
+ * within the bucket, so behavior is unchanged, only the amount of
+ * re-scanning is reduced.
+ */
+function groupEventsByPodName(events: K8sEvent[]): Map<string, K8sEvent[]> {
+  const groups = new Map<string, K8sEvent[]>();
+  for (const e of events) {
+    const name = e.involvedObject?.name;
+    if (e.involvedObject?.kind !== 'Pod' || !name) continue;
+    const bucket = groups.get(name);
+    if (bucket) {
+      bucket.push(e);
+    } else {
+      groups.set(name, [e]);
+    }
+  }
+  return groups;
+}
+
 export function analyzeNamespace(podList: PodList, eventList: EventList): PodDiagnosis[] {
   const events = eventList.items ?? [];
-  return (podList.items ?? []).map((pod) => analyzePod(pod, events));
+  const eventsByPodName = groupEventsByPodName(events);
+  return (podList.items ?? []).map((pod) =>
+    analyzePod(pod, eventsByPodName.get(pod.metadata.name) ?? []),
+  );
 }
