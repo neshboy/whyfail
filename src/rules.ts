@@ -54,6 +54,26 @@ function lastTerminated(cs: ContainerStatus): ContainerStateTerminated | undefin
   return cs.state?.terminated ?? cs.lastState?.terminated;
 }
 
+/** Extracts the container name from an event's involvedObject.fieldPath, e.g. "spec.containers{app}" -> "app". */
+function containerNameFromFieldPath(fieldPath: string | undefined): string | undefined {
+  if (!fieldPath) return undefined;
+  const match = /^spec\.(?:containers|initContainers)\{(.+)\}$/.exec(fieldPath);
+  return match?.[1];
+}
+
+/**
+ * Picks the containerStatus that a matched event actually concerns, using
+ * involvedObject.fieldPath when the event carries one. Falls back to
+ * undefined (letting the caller decide a default) when the event has no
+ * fieldPath or it doesn't correspond to any candidate - this keeps behavior
+ * unchanged for events/clusters that never set fieldPath.
+ */
+function containerForEvent(statuses: ContainerStatus[], event: K8sEvent | undefined): ContainerStatus | undefined {
+  const name = containerNameFromFieldPath(event?.involvedObject?.fieldPath);
+  if (!name) return undefined;
+  return statuses.find((cs) => cs.name === name);
+}
+
 export const rules: Rule[] = [
   // 1. OOMKilled - checked before the generic CrashLoopBackOff rules below,
   // because a pod that is being OOM-killed usually also shows
@@ -115,13 +135,14 @@ export const rules: Rule[] = [
     id: 'imagepull-manifest-unknown',
     description: "ImagePullBackOff because the image tag/manifest doesn't exist in the registry.",
     match(ctx) {
-      const cs = containersWithWaitingReason(ctx.containerStatuses, ['ImagePullBackOff', 'ErrImagePull'])[0];
-      if (!cs) return null;
+      const candidates = containersWithWaitingReason(ctx.containerStatuses, ['ImagePullBackOff', 'ErrImagePull']);
+      if (candidates.length === 0) return null;
       const ev = findEvent(ctx.events, {
         reasons: ['Failed'],
         messageIncludesAny: ['manifest unknown', 'not found', 'repository does not exist', 'name unknown'],
       });
       if (!ev) return null;
+      const cs = containerForEvent(candidates, ev) ?? candidates[0];
       return {
         summary: `Container "${cs.name}" can't pull its image - the tag doesn't exist in the registry.`,
         detail: `Event: "${ev.message}". Double-check the image name/tag (${
@@ -136,8 +157,8 @@ export const rules: Rule[] = [
     id: 'imagepull-auth',
     description: "ImagePullBackOff because the cluster can't authenticate to a private registry.",
     match(ctx) {
-      const cs = containersWithWaitingReason(ctx.containerStatuses, ['ImagePullBackOff', 'ErrImagePull'])[0];
-      if (!cs) return null;
+      const candidates = containersWithWaitingReason(ctx.containerStatuses, ['ImagePullBackOff', 'ErrImagePull']);
+      if (candidates.length === 0) return null;
       const ev = findEvent(ctx.events, {
         reasons: ['Failed'],
         messageIncludesAny: [
@@ -149,6 +170,7 @@ export const rules: Rule[] = [
         ],
       });
       if (!ev) return null;
+      const cs = containerForEvent(candidates, ev) ?? candidates[0];
       return {
         summary: `Container "${cs.name}" can't pull its image - the cluster can't authenticate to the registry.`,
         detail: `Event: "${ev.message}". This image is likely private; check that a valid imagePullSecrets entry is attached to the pod or its service account.`,
@@ -199,7 +221,10 @@ export const rules: Rule[] = [
     match(ctx) {
       const ev = findEvent(ctx.events, { reasons: ['Unhealthy'], messageIncludesAny: ['readiness probe failed'] });
       if (!ev) return null;
-      const cs = ctx.containerStatuses.find((c) => c.state?.running) ?? ctx.containerStatuses[0];
+      const cs =
+        containerForEvent(ctx.containerStatuses, ev) ??
+        ctx.containerStatuses.find((c) => c.state?.running) ??
+        ctx.containerStatuses[0];
       return {
         summary: `Container "${cs?.name ?? 'unknown'}" is running but failing its readiness probe, so it isn't receiving traffic.`,
         detail: `Event: "${ev.message}". The process is up but not reporting ready on the configured readiness check - verify the probe's path/port and how long the app takes to become ready.`,
@@ -216,7 +241,7 @@ export const rules: Rule[] = [
         findEvent(ctx.events, { reasons: ['Unhealthy'], messageIncludesAny: ['liveness probe failed'] }) ??
         findEvent(ctx.events, { reasons: ['Killing'], messageIncludesAny: ['liveness probe failed', 'failed liveness probe'] });
       if (!ev) return null;
-      const cs = ctx.containerStatuses[0];
+      const cs = containerForEvent(ctx.containerStatuses, ev) ?? ctx.containerStatuses[0];
       return {
         summary: `Container "${cs?.name ?? 'unknown'}" is being restarted because it keeps failing its liveness probe.`,
         detail: `Event: "${ev.message}". Kubernetes considers the container unhealthy and restarts it (restartCount=${
@@ -231,6 +256,10 @@ export const rules: Rule[] = [
     id: 'pvc-unbound',
     description: "Pod can't start because a PersistentVolumeClaim it depends on isn't bound.",
     match(ctx) {
+      // A pod that has already been scheduled and started (Running/Succeeded/...)
+      // cannot currently have an unresolved "can't start, PVC not bound" problem -
+      // any such event still sitting in the cluster's retention window is stale.
+      if (ctx.pod.status?.phase !== 'Pending') return null;
       const ev = findEvent(ctx.events, {
         reasons: ['FailedScheduling', 'FailedMount', 'FailedAttachVolume'],
         messageIncludesAny: ['persistentvolumeclaim', 'pvc'],
@@ -248,6 +277,10 @@ export const rules: Rule[] = [
     id: 'insufficient-resources',
     description: 'FailedScheduling because no node has enough free CPU/memory for the pod.',
     match(ctx) {
+      // A pod that is already Running/Succeeded/... has, by definition, already
+      // been scheduled - a lingering FailedScheduling event can't describe its
+      // current state.
+      if (ctx.pod.status?.phase !== 'Pending') return null;
       const ev = findEvent(ctx.events, {
         reasons: ['FailedScheduling'],
         messageIncludesAny: ['insufficient cpu', 'insufficient memory'],
@@ -266,6 +299,9 @@ export const rules: Rule[] = [
     id: 'unschedulable-node-affinity',
     description: "FailedScheduling because no node matches the pod's node selector/affinity, or all matches are tainted.",
     match(ctx) {
+      // Same reasoning as the other FailedScheduling-driven rules above: once
+      // a pod is actually running, it has already been placed on a node.
+      if (ctx.pod.status?.phase !== 'Pending') return null;
       const ev = findEvent(ctx.events, {
         reasons: ['FailedScheduling'],
         messageIncludesAny: ["didn't match", 'node(s) had taint', "node(s) didn't match", 'node affinity'],

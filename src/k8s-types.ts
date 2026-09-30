@@ -86,6 +86,8 @@ export interface InvolvedObject {
   name?: string;
   namespace?: string;
   uid?: string;
+  /** e.g. "spec.containers{app}" - identifies which container this event is about, when set. */
+  fieldPath?: string;
 }
 
 export interface K8sEvent {
